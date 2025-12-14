@@ -84,18 +84,18 @@ const Home: React.FC = () => {
                             >
                                 <Link to="/collections">
                                     <motion.button 
-                                        whileHover={{ scale: 1.05 }}
+                                        whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(233, 30, 99, 0.4)" }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="bg-dark-brown text-white px-8 py-4 rounded-full font-semibold hover:bg-black transition-all shadow-xl hover:shadow-2xl flex items-center gap-2 justify-center w-full sm:w-auto"
+                                        className="bg-dark-brown text-white px-8 py-4 rounded-full font-semibold hover:bg-black transition-all shadow-xl flex items-center gap-2 justify-center w-full sm:w-auto"
                                     >
                                         Shop Collection <ArrowRight size={18} />
                                     </motion.button>
                                 </Link>
                                 <Link to="/about">
                                     <motion.button 
-                                        whileHover={{ scale: 1.05 }}
+                                        whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.8)" }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="bg-white/50 backdrop-blur-md text-dark-brown px-8 py-4 rounded-full font-semibold hover:bg-white transition-all shadow-lg border border-white/50 w-full sm:w-auto"
+                                        className="bg-white/50 backdrop-blur-md text-dark-brown px-8 py-4 rounded-full font-semibold transition-all shadow-lg border border-white/50 w-full sm:w-auto"
                                     >
                                         Our Story
                                     </motion.button>

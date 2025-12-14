@@ -62,7 +62,11 @@ const Navbar: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="flex justify-between items-center h-20">
                     <NavLink to="/" className="flex items-center space-x-2 group">
-                        <motion.div whileHover={{ scale: 1.1, rotate: 10 }} className="bg-pink/10 p-2 rounded-full text-pink">
+                        <motion.div 
+                            whileHover={{ scale: 1.2, rotate: 180 }} 
+                            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                            className="bg-pink/10 p-2 rounded-full text-pink"
+                        >
                             <Flame size={24} fill="currentColor" />
                         </motion.div>
                         <span className="font-serif text-2xl font-bold text-dark-brown tracking-tight group-hover:text-pink transition-colors">Trinkets <span className="text-pink font-light">&</span> Beyond</span>
