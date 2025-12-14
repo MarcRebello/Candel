@@ -14,13 +14,14 @@ interface CandleCardProps {
 const CandleCard: React.FC<CandleCardProps> = ({ candle }) => {
     return (
         <motion.div 
-            whileHover={{ y: -12 }}
-            className="group bg-white rounded-[2rem] shadow-lg hover:shadow-2xl hover:shadow-pink/20 transition-all duration-300 h-full flex flex-col overflow-hidden border border-gray-100"
+            whileHover={{ y: -15, scale: 1.02 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="group bg-white rounded-[2rem] shadow-lg hover:shadow-2xl hover:shadow-pink/30 transition-all duration-300 h-full flex flex-col overflow-hidden border border-gray-100"
         >
             {/* Image Container */}
             <div className="relative overflow-hidden aspect-[4/5]">
                 <motion.img 
-                    whileHover={{ scale: 1.1 }}
+                    whileHover={{ scale: 1.15 }}
                     transition={{ duration: 0.7, ease: "easeOut" }}
                     src={candle.image} 
                     alt={candle.name} 
