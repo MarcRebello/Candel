@@ -22,6 +22,7 @@ const Home: React.FC = () => {
         loadData();
     }, []);
 
+    // Staggered entrance for children elements
     const containerVariants: Variants = {
         hidden: { opacity: 0 },
         visible: {
@@ -30,13 +31,18 @@ const Home: React.FC = () => {
         }
     };
 
+    // Bouncy "Pop" animation
     const itemVariants: Variants = {
-        hidden: { opacity: 0, y: 40, scale: 0.95 },
+        hidden: { opacity: 0, y: 50, scale: 0.8 },
         visible: { 
             opacity: 1, 
             y: 0, 
             scale: 1,
-            transition: { type: "spring", stiffness: 60, damping: 15 } 
+            transition: { 
+                type: "spring", 
+                stiffness: 400, 
+                damping: 20 
+            } 
         }
     };
 
@@ -89,7 +95,7 @@ const Home: React.FC = () => {
                             >
                                 <Link to="/collections">
                                     <motion.button 
-                                        whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgba(233, 30, 99, 0.4)" }}
+                                        whileHover={{ scale: 1.05, boxShadow: "0 10px 30px -10px rgba(233, 30, 99, 0.5)" }}
                                         whileTap={{ scale: 0.95 }}
                                         className="bg-gradient-to-r from-pink to-rose-500 text-white px-8 py-4 rounded-full font-semibold hover:brightness-110 transition-all shadow-xl flex items-center gap-2 justify-center w-full sm:w-auto"
                                     >
@@ -98,7 +104,7 @@ const Home: React.FC = () => {
                                 </Link>
                                 <Link to="/about">
                                     <motion.button 
-                                        whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.8)" }}
+                                        whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.9)" }}
                                         whileTap={{ scale: 0.95 }}
                                         className="bg-white/50 backdrop-blur-md text-dark-brown px-8 py-4 rounded-full font-semibold transition-all shadow-lg border border-white/50 w-full sm:w-auto"
                                     >
@@ -111,9 +117,9 @@ const Home: React.FC = () => {
                         {/* Hero Image with Blob */}
                         <motion.div 
                             className="flex-1 w-full relative"
-                            initial={{ opacity: 0, x: 50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 1, delay: 0.2 }}
+                            initial={{ opacity: 0, x: 100, rotate: 10 }}
+                            animate={{ opacity: 1, x: 0, rotate: 0 }}
+                            transition={{ type: "spring", stiffness: 50, damping: 20, delay: 0.2 }}
                         >
                             <div className="relative z-10">
                                 <motion.div
@@ -130,9 +136,9 @@ const Home: React.FC = () => {
                                 {/* Floating Badge */}
                                 <motion.div 
                                     className="absolute -bottom-8 -left-4 md:left-10 bg-white p-4 rounded-2xl shadow-xl border border-pink/10 flex items-center gap-4"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.8 }}
+                                    initial={{ opacity: 0, scale: 0, y: 50 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    transition={{ type: "spring", stiffness: 500, damping: 30, delay: 0.8 }}
                                 >
                                     <div className="bg-green-100 p-3 rounded-full">
                                         <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -172,10 +178,15 @@ const Home: React.FC = () => {
                         {candles.map((candle, i) => (
                             <motion.div 
                                 key={candle.id}
-                                initial={{ opacity: 0, y: 50 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.1, duration: 0.6 }}
-                                viewport={{ once: true }}
+                                initial={{ opacity: 0, y: 100, scale: 0.8 }}
+                                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                                transition={{ 
+                                    type: "spring", 
+                                    stiffness: 100, 
+                                    damping: 20, 
+                                    delay: i * 0.1 
+                                }}
+                                viewport={{ once: true, margin: "-100px" }}
                             >
                                 <CandleCard candle={candle} />
                             </motion.div>
@@ -201,10 +212,15 @@ const Home: React.FC = () => {
                         {reviews.map((review, i) => (
                             <motion.div 
                                 key={review.id}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
+                                initial={{ opacity: 0, x: 50 }}
+                                whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
+                                transition={{ 
+                                    type: "spring",
+                                    stiffness: 100,
+                                    damping: 20,
+                                    delay: i * 0.1 
+                                }}
                                 className="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-transparent hover:border-pink/20"
                             >
                                 <div className="flex text-pink mb-6">
