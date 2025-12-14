@@ -13,6 +13,7 @@ const Home: React.FC = () => {
 
     useEffect(() => {
         const loadData = async () => {
+            // Fetch data from API
             const [c, r] = await Promise.all([api.getCandles(), api.getReviews()]);
             setCandles(c.slice(0, 3));
             setReviews(r.slice(0, 3));
