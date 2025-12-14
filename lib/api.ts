@@ -6,10 +6,13 @@ import { Candle, Review } from '../types';
 import { MOCK_CANDLES, MOCK_REVIEWS } from '../constants';
 
 // --- CONFIGURATION ---
-// This object holds the keys needed to talk to the database.
+// PASTE YOUR SUPABASE KEYS HERE
 const SUPABASE_CONFIG = {
-    url: '', // The unique URL for your Supabase project
-    key: ''  // The public API key (safe to use in browsers for public data)
+    // 1. Go to https://supabase.com/dashboard/project/_/settings/api
+    // 2. Copy "Project URL" and paste it between the quotes below
+    url: '', 
+    // 3. Copy "anon" public key and paste it between the quotes below
+    key: ''  
 };
 
 // --- INITIALIZATION ---
@@ -18,11 +21,18 @@ let supabase: any = null;
 
 // Check if the user has actually provided keys.
 // If both URL and KEY are present strings, we enable cloud mode.
-const isCloudEnabled = SUPABASE_CONFIG.url && SUPABASE_CONFIG.key;
+const isCloudEnabled = SUPABASE_CONFIG.url.length > 0 && SUPABASE_CONFIG.key.length > 0;
 
 // If cloud is enabled, initialize the connection
 if (isCloudEnabled) {
-    supabase = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.key);
+    try {
+        supabase = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.key);
+        console.log("🔌 Connected to Supabase Cloud Database");
+    } catch (e) {
+        console.error("Failed to initialize Supabase:", e);
+    }
+} else {
+    console.log("📦 Using Local Storage (Offline Mode)");
 }
 
 // Define keys for LocalStorage. This is where data is saved on your computer if cloud is off.
@@ -38,13 +48,13 @@ export const api = {
     // Function to fetch the list of candles
     async getCandles(): Promise<Candle[]> {
         // 1. Try to get data from the Cloud (Supabase)
-        if (isCloudEnabled) {
+        if (isCloudEnabled && supabase) {
             // 'select(*)' means "get all columns" from the "candles" table
             const { data, error } = await supabase.from('candles').select('*');
             // If successful, return the data immediately
             if (!error && data) return data;
             // If there's an error, log it (and fall through to local storage)
-            console.error("Supabase Error:", error);
+            console.error("Supabase Error fetching candles:", error);
         }
         
         // 2. Fallback to LocalStorage (Offline Mode)
@@ -78,10 +88,11 @@ export const api = {
         };
 
         // 1. Try to save to Cloud
-        if (isCloudEnabled) {
+        if (isCloudEnabled && supabase) {
             // Insert the new row and return the created record
             const { data: cloudData, error } = await supabase.from('candles').insert([newCandle]).select();
             if (!error && cloudData) return cloudData[0];
+            console.error("Supabase Error adding candle:", error);
         }
 
         // 2. Fallback to LocalStorage
@@ -100,10 +111,11 @@ export const api = {
 
     // Function to fetch reviews
     async getReviews(): Promise<Review[]> {
-        if (isCloudEnabled) {
+        if (isCloudEnabled && supabase) {
             // Get reviews and sort them by date (newest first)
             const { data, error } = await supabase.from('reviews').select('*').order('date', { ascending: false });
             if (!error && data) return data;
+            console.error("Supabase Error fetching reviews:", error);
         }
 
         // Fallback Logic
@@ -126,9 +138,10 @@ export const api = {
             date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
         };
 
-        if (isCloudEnabled) {
+        if (isCloudEnabled && supabase) {
             const { data: cloudData, error } = await supabase.from('reviews').insert([newReview]).select();
              if (!error && cloudData) return cloudData[0];
+             console.error("Supabase Error adding review:", error);
         }
 
         // Fallback Logic
