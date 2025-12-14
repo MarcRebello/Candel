@@ -10,9 +10,10 @@ import { MOCK_CANDLES, MOCK_REVIEWS } from '../constants';
 const SUPABASE_CONFIG = {
     // 1. Go to https://supabase.com/dashboard/project/_/settings/api
     // 2. Copy "Project URL" and paste it between the quotes below
-    url: '', 
-    // 3. Copy "anon" public key and paste it between the quotes below
-    key: ''  
+    url: 'https://yxyigyphikqaxkwpcrpe.supabase.co', 
+    // 3. Go to Settings (Gear Icon) -> API -> Project API Keys -> "anon" "public"
+    // 4. Copy that long key and paste it here:
+    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4eWlneXBoaWtxYXhrd3BjcnBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2OTM2NTAsImV4cCI6MjA4MTI2OTY1MH0.AAy5UtrpvRGS-asd5RQPzbKGWmgixdjCLmk6g9_o1hY'  
 };
 
 // --- INITIALIZATION ---
