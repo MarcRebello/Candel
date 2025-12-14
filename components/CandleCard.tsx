@@ -1,82 +1,70 @@
 // Import React
 import React from 'react';
-// Import the Star icon from Lucide icon library
-import { Star } from 'lucide-react';
+// Import icons
+import { Star, ShoppingBag } from 'lucide-react';
 // Import motion from framer-motion for animations
 import { motion } from 'framer-motion';
 // Import the Candle type definition
 import { Candle } from '../types';
 
-// Define the props (inputs) this component accepts
 interface CandleCardProps {
-    candle: Candle; // It expects a single 'candle' object
+    candle: Candle;
 }
 
-// Define the component
 const CandleCard: React.FC<CandleCardProps> = ({ candle }) => {
     return (
-        // motion.div acts like a regular div but allows animations
         <motion.div 
-            // When mouse hovers, move up 10 pixels (y: -10)
-            whileHover={{ y: -10, transition: { duration: 0.2 } }}
-            // Styles: white bg, rounded corners, shadow, flexbox layout
-            className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-shadow cursor-pointer border border-pink/20 overflow-hidden flex flex-col h-full"
+            whileHover={{ y: -12 }}
+            className="group bg-white rounded-[2rem] shadow-lg hover:shadow-2xl hover:shadow-pink/20 transition-all duration-300 h-full flex flex-col overflow-hidden border border-gray-100"
         >
             {/* Image Container */}
-            <div className="relative overflow-hidden h-64">
-                {/* Animated Image */}
+            <div className="relative overflow-hidden aspect-[4/5]">
                 <motion.img 
-                    // Zoom in slightly (scale 1.1) when hovering
                     whileHover={{ scale: 1.1 }}
-                    transition={{ duration: 0.6 }}
+                    transition={{ duration: 0.7, ease: "easeOut" }}
                     src={candle.image} 
                     alt={candle.name} 
-                    className="w-full h-full object-cover" // Ensure image covers area without distorting
+                    className="w-full h-full object-cover"
                 />
-                {/* Collection Badge (Top Left) */}
+                
+                {/* Overlay Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                {/* Collection Badge */}
                 <div className="absolute top-4 left-4">
-                     <span className="text-xs font-bold text-pink bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                     <span className="text-[10px] font-bold text-dark-brown bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
                         {candle.collection}
                     </span>
                 </div>
+
+                {/* Quick Action Button (Visible on Hover) */}
+                <motion.button
+                    initial={{ opacity: 0, y: 20 }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="absolute bottom-6 right-6 w-12 h-12 bg-white text-pink rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0"
+                >
+                    <ShoppingBag size={20} />
+                </motion.button>
             </div>
             
             {/* Content Container */}
-            <div className="p-6 flex flex-col flex-grow">
-                {/* Candle Name */}
-                <h3 className="font-serif text-2xl font-bold text-pink mb-2">{candle.name}</h3>
-                {/* Description - flex-grow pushes the button to the bottom */}
-                <p className="text-dark-brown mb-4 font-medium flex-grow">{candle.description}</p>
-                
-                {/* Rating Section */}
-                <div className="flex items-center gap-2 mb-4">
-                    <div className="flex text-pink">
-                        {/* Create an array of 5 items to render 5 stars */}
-                        {[...Array(5)].map((_, i) => (
-                            <Star 
-                                key={i} 
-                                size={16} 
-                                // If index (0-4) is less than rating, fill it.
-                                fill={i < candle.rating ? "currentColor" : "none"} 
-                                // If star is empty, make it gray
-                                className={i < candle.rating ? "" : "text-gray-300"}
-                            />
-                        ))}
+            <div className="p-8 flex flex-col flex-grow relative bg-white">
+                <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-serif text-2xl font-bold text-dark-brown group-hover:text-pink transition-colors">{candle.name}</h3>
+                    <div className="flex items-center gap-1 bg-cream px-2 py-1 rounded-lg">
+                        <Star size={12} className="text-pink fill-pink" />
+                        <span className="text-xs font-bold text-dark-brown">{candle.rating}</span>
                     </div>
-                    {/* Review count text */}
-                    <span className="text-dark-brown text-sm font-medium">({candle.reviewCount} reviews)</span>
                 </div>
+
+                <p className="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed flex-grow">{candle.description}</p>
                 
-                {/* Action Button */}
-                <motion.button 
-                    // Small grow effect on hover
-                    whileHover={{ scale: 1.02 }}
-                    // Small shrink effect on click (Tap)
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full bg-pink text-white py-3 rounded-lg font-medium hover:bg-rose-600 transition-colors shadow-md"
+                <button 
+                    className="w-full py-3 rounded-xl font-bold text-sm uppercase tracking-wider border-2 border-pink/10 text-pink hover:bg-pink hover:text-white transition-all duration-300"
                 >
                     View Details
-                </motion.button>
+                </button>
             </div>
         </motion.div>
     );
