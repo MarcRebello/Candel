@@ -50,16 +50,16 @@ export const api = {
     async getCandles(): Promise<Candle[]> {
         // 1. Try to get data from the Cloud (Supabase)
         if (isCloudEnabled && supabase) {
-            // 'select(*)' means "get all columns" from the "candles" table
             const { data, error } = await supabase.from('candles').select('*');
-            // If successful, return the data immediately
-            if (!error && data) return data;
-            // If there's an error, log it (and fall through to local storage)
-            console.error("Supabase Error fetching candles:", error);
+            
+            // FIX: Ensure we actually got data back. If table is empty or missing, fallback to mocks.
+            if (!error && data && data.length > 0) {
+                return data;
+            }
+            console.warn("Supabase returned empty data or error, falling back to mocks.", error);
         }
         
-        // 2. Fallback to LocalStorage (Offline Mode)
-        // Simulate a small network delay for realism
+        // 2. Fallback to LocalStorage (Offline Mode) or Mocks
         await delay(300);
         
         // Check browser storage for saved candles
@@ -115,8 +115,10 @@ export const api = {
         if (isCloudEnabled && supabase) {
             // Get reviews and sort them by date (newest first)
             const { data, error } = await supabase.from('reviews').select('*').order('date', { ascending: false });
-            if (!error && data) return data;
-            console.error("Supabase Error fetching reviews:", error);
+            
+            // FIX: Fallback if empty
+            if (!error && data && data.length > 0) return data;
+            console.warn("Supabase empty/error for reviews, using mocks.");
         }
 
         // Fallback Logic
