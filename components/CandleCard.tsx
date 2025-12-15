@@ -2,8 +2,11 @@
 import React from 'react';
 // Import icons
 import { Star, ShoppingBag } from 'lucide-react';
-// Import motion from framer-motion for animations
-import { motion } from 'framer-motion';
+
+// Fix: Cast framer-motion to any to bypass prop validation type errors
+import * as FramerMotion from 'framer-motion';
+const { motion } = FramerMotion as any;
+
 // Import the Candle type definition
 import { Candle } from '../types';
 

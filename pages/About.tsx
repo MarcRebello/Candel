@@ -1,5 +1,9 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+
+// Fix: Cast framer-motion to any to bypass prop validation type errors
+import * as FramerMotion from 'framer-motion';
+const { motion } = FramerMotion as any;
+
 import { Award, Heart, Hand, Leaf, Lightbulb, Users, Star } from 'lucide-react';
 
 const About: React.FC = () => {

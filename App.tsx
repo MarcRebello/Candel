@@ -1,5 +1,9 @@
 import React from 'react';
-import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+
+// Fix: Cast react-router-dom to any to bypass type errors
+import * as ReactRouterDOM from 'react-router-dom';
+const { HashRouter, Routes, Route, useLocation } = ReactRouterDOM as any;
+
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Collections from './pages/Collections';

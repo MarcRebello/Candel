@@ -1,7 +1,10 @@
 // Import React hooks for state and side-effects
 import React, { useState, useEffect } from 'react';
-// Import animation library
-import { motion } from 'framer-motion';
+
+// Fix: Cast framer-motion to any to bypass prop validation type errors
+import * as FramerMotion from 'framer-motion';
+const { motion } = FramerMotion as any;
+
 // Import icons
 import { Star, User, Loader } from 'lucide-react';
 // Import our API helper

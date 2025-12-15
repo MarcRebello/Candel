@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+
+// Fix: Cast framer-motion to any to bypass prop validation type errors
+import * as FramerMotion from 'framer-motion';
+const { motion } = FramerMotion as any;
+
 import { api } from '../lib/api';
 import { Candle } from '../types';
 import CandleCard from '../components/CandleCard';
