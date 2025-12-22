@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
-import * as FramerMotion from 'framer-motion';
-const { motion, useScroll, useTransform } = FramerMotion as any;
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Heart, Star, Loader, ArrowRight, Sparkles } from 'lucide-react';
 import { api } from '../lib/api';
 import { Candle, Review } from '../types';
