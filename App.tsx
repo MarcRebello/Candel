@@ -1,8 +1,6 @@
 import React from 'react';
-
-// Fix: Cast react-router-dom to any to bypass type errors
-import * as ReactRouterDOM from 'react-router-dom';
-const { HashRouter, Routes, Route, useLocation } = ReactRouterDOM as any;
+import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import Layout from './components/Layout';
 import Home from './pages/Home';
@@ -12,31 +10,57 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Admin from './pages/Admin';
 
-// Wrapper for scrolling to top on route change
 const ScrollToTop = () => {
     const { pathname } = useLocation();
-    
     React.useEffect(() => {
         window.scrollTo(0, 0);
     }, [pathname]);
-    
     return null;
 }
+
+const AnimatedRoutes = () => {
+    const location = useLocation();
+    return (
+        <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+                <Route path="/" element={<Layout />}>
+                    <Route index element={
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+                            <Home />
+                        </motion.div>
+                    } />
+                    <Route path="collections" element={
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4 }}>
+                            <Collections />
+                        </motion.div>
+                    } />
+                    <Route path="reviews" element={
+                        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
+                            <Reviews />
+                        </motion.div>
+                    } />
+                    <Route path="about" element={
+                        <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.4 }}>
+                            <About />
+                        </motion.div>
+                    } />
+                    <Route path="contact" element={
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                            <Contact />
+                        </motion.div>
+                    } />
+                    <Route path="secret" element={<Admin />} />
+                </Route>
+            </Routes>
+        </AnimatePresence>
+    );
+};
 
 const App: React.FC = () => {
     return (
         <HashRouter>
             <ScrollToTop />
-            <Routes>
-                <Route path="/" element={<Layout />}>
-                    <Route index element={<Home />} />
-                    <Route path="collections" element={<Collections />} />
-                    <Route path="reviews" element={<Reviews />} />
-                    <Route path="about" element={<About />} />
-                    <Route path="contact" element={<Contact />} />
-                    <Route path="secret" element={<Admin />} />
-                </Route>
-            </Routes>
+            <AnimatedRoutes />
         </HashRouter>
     );
 };

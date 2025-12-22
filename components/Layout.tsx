@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import * as ReactRouterDOM from 'react-router-dom';
-const { NavLink, Outlet, useLocation } = ReactRouterDOM as any;
-import * as FramerMotion from 'framer-motion';
-const { motion, AnimatePresence } = FramerMotion as any;
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
 import { Flame, Menu, X, Instagram, ShoppingCart, Search } from 'lucide-react';
 import { NAVIGATION_LINKS } from '../constants';
 
 const BackgroundVisuals = () => {
     return (
         <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-            {/* Soft Organic Gradients */}
             <div className="absolute top-[-20%] right-[-10%] w-[80%] h-[80%] bg-rose/10 rounded-full blur-[140px] animate-pulse-slow" />
             <div className="absolute bottom-[-10%] left-[-5%] w-[60%] h-[60%] bg-gold/5 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }} />
             
-            {/* Ember Particles */}
-            {[...Array(12)].map((_, i) => (
+            {[...Array(15)].map((_, i) => (
                 <div
                     key={i}
                     className="absolute w-1 h-1 bg-rose/40 rounded-full animate-ember"
@@ -41,11 +37,22 @@ const Navbar: React.FC = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    const { scrollYProgress } = useScroll();
+    const scaleX = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001
+    });
+
     return (
         <nav className={`fixed w-full top-0 z-50 transition-all duration-700 ${scrolled ? 'py-4' : 'py-8'}`}>
+            <motion.div 
+                className="absolute top-0 left-0 right-0 h-1 bg-rose origin-left z-50"
+                style={{ scaleX }}
+            />
             <div className="max-w-7xl mx-auto px-6 sm:px-10">
                 <div className={`flex justify-between items-center transition-all duration-500 rounded-[2rem] px-8 py-3 ${
-                    scrolled ? 'bg-white/70 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/50' : 'bg-transparent'
+                    scrolled ? 'bg-white/80 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/50' : 'bg-transparent'
                 }`}>
                     <NavLink to="/" className="flex items-center space-x-3 group">
                         <motion.div 
@@ -64,7 +71,7 @@ const Navbar: React.FC = () => {
                             <NavLink
                                 key={link.path}
                                 to={link.path}
-                                className={({ isActive }: any) =>
+                                className={({ isActive }) =>
                                     `px-4 py-1.5 rounded-full text-xs font-bold tracking-[0.15em] uppercase transition-all duration-500 relative ${
                                         isActive ? 'text-rose' : 'text-charcoal/60 hover:text-charcoal'
                                     }`
@@ -105,9 +112,9 @@ const Navbar: React.FC = () => {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
                         className="md:hidden absolute top-full left-6 right-6 mt-4 bg-white/95 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl border border-white/50 overflow-hidden"
                     >
                         <div className="p-8 space-y-4">
@@ -116,7 +123,7 @@ const Navbar: React.FC = () => {
                                     key={link.path}
                                     to={link.path}
                                     onClick={() => setIsOpen(false)}
-                                    className={({ isActive }: any) =>
+                                    className={({ isActive }) =>
                                         `block px-8 py-5 rounded-2xl text-xl font-serif font-bold transition-all ${
                                             isActive ? 'bg-rose text-white shadow-xl shadow-rose/20' : 'text-charcoal hover:bg-rose/5 hover:text-rose'
                                         }`
