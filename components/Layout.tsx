@@ -2,32 +2,27 @@ import React, { useState, useEffect } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 const { NavLink, Outlet, useLocation } = ReactRouterDOM as any;
 import * as FramerMotion from 'framer-motion';
-const { motion, AnimatePresence, useScroll, useTransform } = FramerMotion as any;
-import { Flame, Menu, X, Instagram, ShoppingCart } from 'lucide-react';
+const { motion, AnimatePresence } = FramerMotion as any;
+import { Flame, Menu, X, Instagram, ShoppingCart, Search } from 'lucide-react';
 import { NAVIGATION_LINKS } from '../constants';
 
 const BackgroundVisuals = () => {
     return (
         <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-            {/* Soft Warm Gradients */}
-            <div className="absolute top-[-10%] right-[-5%] w-[60%] h-[60%] bg-pink/5 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '12s' }} />
-            <div className="absolute bottom-[-5%] left-[-5%] w-[50%] h-[50%] bg-rose-200/10 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '8s' }} />
+            {/* Soft Organic Gradients */}
+            <div className="absolute top-[-20%] right-[-10%] w-[80%] h-[80%] bg-rose/10 rounded-full blur-[140px] animate-pulse-slow" />
+            <div className="absolute bottom-[-10%] left-[-5%] w-[60%] h-[60%] bg-gold/5 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }} />
             
-            {/* Animated Particles */}
-            {[...Array(6)].map((_, i) => (
-                <motion.div
+            {/* Ember Particles */}
+            {[...Array(12)].map((_, i) => (
+                <div
                     key={i}
-                    className="absolute w-1 h-1 bg-pink/20 rounded-full"
-                    initial={{ x: Math.random() * 100 + "%", y: Math.random() * 100 + "%" }}
-                    animate={{ 
-                        y: ["-10%", "110%"],
-                        opacity: [0, 1, 0]
-                    }}
-                    transition={{ 
-                        duration: 10 + Math.random() * 20, 
-                        repeat: Infinity, 
-                        ease: "linear",
-                        delay: Math.random() * 10
+                    className="absolute w-1 h-1 bg-rose/40 rounded-full animate-ember"
+                    style={{ 
+                        left: `${Math.random() * 100}%`,
+                        top: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 10}s`,
+                        animationDuration: `${10 + Math.random() * 10}s`
                     }}
                 />
             ))}
@@ -41,26 +36,26 @@ const Navbar: React.FC = () => {
     const location = useLocation();
 
     useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 20);
+        const handleScroll = () => setScrolled(window.scrollY > 40);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     return (
-        <nav className={`fixed w-full top-0 z-50 transition-all duration-500 ${scrolled ? 'py-3' : 'py-6'}`}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className={`relative flex justify-between items-center px-6 py-3 rounded-full transition-all duration-500 ${
-                    scrolled ? 'bg-white/80 backdrop-blur-xl shadow-lg border border-white/40' : 'bg-transparent'
+        <nav className={`fixed w-full top-0 z-50 transition-all duration-700 ${scrolled ? 'py-4' : 'py-8'}`}>
+            <div className="max-w-7xl mx-auto px-6 sm:px-10">
+                <div className={`flex justify-between items-center transition-all duration-500 rounded-[2rem] px-8 py-3 ${
+                    scrolled ? 'bg-white/70 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/50' : 'bg-transparent'
                 }`}>
-                    <NavLink to="/" className="flex items-center space-x-2 group">
+                    <NavLink to="/" className="flex items-center space-x-3 group">
                         <motion.div 
-                            whileHover={{ rotate: [0, -10, 10, -10, 0] }}
-                            className="bg-pink text-white p-2 rounded-xl shadow-lg shadow-pink/20"
+                            whileHover={{ rotate: 15, scale: 1.1 }}
+                            className="text-rose transition-colors duration-300 group-hover:text-charcoal"
                         >
-                            <Flame size={20} fill="currentColor" />
+                            <Flame size={28} strokeWidth={1.5} fill="currentColor" />
                         </motion.div>
-                        <span className="font-serif text-xl font-extrabold text-dark-brown tracking-tight">
-                            Trinkets <span className="text-pink">&</span> Beyond
+                        <span className="font-serif text-2xl font-black text-charcoal tracking-tighter uppercase">
+                            Trinkets <span className="text-rose italic">&</span> Beyond
                         </span>
                     </NavLink>
 
@@ -70,32 +65,37 @@ const Navbar: React.FC = () => {
                                 key={link.path}
                                 to={link.path}
                                 className={({ isActive }: any) =>
-                                    `px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative ${
-                                        isActive ? 'text-pink' : 'text-dark-brown/70 hover:text-pink'
+                                    `px-4 py-1.5 rounded-full text-xs font-bold tracking-[0.15em] uppercase transition-all duration-500 relative ${
+                                        isActive ? 'text-rose' : 'text-charcoal/60 hover:text-charcoal'
                                     }`
                                 }
                             >
                                 {link.label}
                                 {location.pathname === link.path && (
                                     <motion.div 
-                                        layoutId="nav-underline"
-                                        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-pink rounded-full"
+                                        layoutId="nav-glow"
+                                        className="absolute -inset-1 bg-rose/5 rounded-full -z-10"
                                     />
                                 )}
                             </NavLink>
                         ))}
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <motion.button 
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="p-2 text-dark-brown hover:text-pink transition-colors relative"
-                        >
-                            <ShoppingCart size={22} />
-                            <span className="absolute top-0 right-0 w-4 h-4 bg-pink text-white text-[10px] flex items-center justify-center rounded-full font-bold">0</span>
-                        </motion.button>
-                        <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-dark-brown">
+                    <div className="flex items-center gap-6">
+                        <div className="hidden sm:flex items-center gap-4">
+                            <button className="text-charcoal/40 hover:text-charcoal transition-colors">
+                                <Search size={20} strokeWidth={1.5} />
+                            </button>
+                            <motion.button 
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                className="p-2 text-charcoal transition-colors relative"
+                            >
+                                <ShoppingCart size={22} strokeWidth={1.5} />
+                                <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose text-white text-[9px] flex items-center justify-center rounded-full font-black">0</span>
+                            </motion.button>
+                        </div>
+                        <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-charcoal">
                             {isOpen ? <X size={28} /> : <Menu size={28} />}
                         </button>
                     </div>
@@ -105,20 +105,20 @@ const Navbar: React.FC = () => {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="md:hidden absolute top-full left-4 right-4 mt-2 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="md:hidden absolute top-full left-6 right-6 mt-4 bg-white/95 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl border border-white/50 overflow-hidden"
                     >
-                        <div className="p-6 space-y-2">
+                        <div className="p-8 space-y-4">
                             {NAVIGATION_LINKS.map((link: any) => (
                                 <NavLink
                                     key={link.path}
                                     to={link.path}
                                     onClick={() => setIsOpen(false)}
                                     className={({ isActive }: any) =>
-                                        `block px-6 py-4 rounded-2xl text-lg font-bold transition-all ${
-                                            isActive ? 'bg-pink text-white shadow-lg shadow-pink/20' : 'text-dark-brown hover:bg-pink/5 hover:text-pink'
+                                        `block px-8 py-5 rounded-2xl text-xl font-serif font-bold transition-all ${
+                                            isActive ? 'bg-rose text-white shadow-xl shadow-rose/20' : 'text-charcoal hover:bg-rose/5 hover:text-rose'
                                         }`
                                     }
                                 >
@@ -135,39 +135,70 @@ const Navbar: React.FC = () => {
 
 const Layout: React.FC = () => {
     return (
-        <div className="flex flex-col min-h-screen relative font-sans">
+        <div className="flex flex-col min-h-screen relative font-sans selection:bg-rose/30">
             <BackgroundVisuals />
             <Navbar />
             <main className="flex-grow z-10 relative">
                  <Outlet />
             </main>
-            <footer className="bg-dark-brown text-white py-20 z-10 relative overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-                        <div className="col-span-1 md:col-span-2 space-y-6">
-                            <div className="flex items-center justify-center md:justify-start space-x-2">
-                                <Flame size={24} className="text-pink" fill="currentColor" />
-                                <span className="font-serif text-2xl font-bold">Trinkets <span className="text-pink">&</span> Beyond</span>
+            <footer className="bg-charcoal text-white py-32 z-10 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none">
+                    <div className="absolute top-[-20%] right-[-10%] w-96 h-96 bg-rose rounded-full blur-[100px]" />
+                </div>
+                
+                <div className="max-w-7xl mx-auto px-8">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-20">
+                        <div className="md:col-span-5 space-y-8">
+                            <div className="flex items-center space-x-3">
+                                <Flame size={32} className="text-rose" fill="currentColor" />
+                                <span className="font-serif text-3xl font-black uppercase tracking-tighter">
+                                    Trinkets <span className="text-rose italic">&</span> Beyond
+                                </span>
                             </div>
-                            <p className="text-white/60 text-lg max-w-md mx-auto md:mx-0 font-medium">
-                                Elevating everyday moments with handcrafted scents that linger in your heart.
+                            <p className="text-white/50 text-xl font-light leading-relaxed max-w-sm">
+                                Elevating everyday moments with handcrafted scents that linger in your heart and home.
                             </p>
+                            <div className="flex gap-4">
+                                <a href="#" className="w-14 h-14 border border-white/10 rounded-full flex items-center justify-center hover:bg-rose hover:border-rose transition-all group">
+                                    <Instagram size={22} className="group-hover:scale-110 transition-transform" />
+                                </a>
+                            </div>
                         </div>
-                        <div>
-                            <h4 className="font-serif text-lg font-bold mb-6 text-pink">Quick Links</h4>
-                            <ul className="space-y-4 font-medium text-white/50">
+                        
+                        <div className="md:col-span-3">
+                            <h4 className="font-serif text-lg font-bold mb-8 text-rose">Discovery</h4>
+                            <ul className="space-y-5">
                                 {NAVIGATION_LINKS.map(l => (
-                                    <li key={l.path}><NavLink to={l.path} className="hover:text-white transition-colors">{l.label}</NavLink></li>
+                                    <li key={l.path}>
+                                        <NavLink to={l.path} className="text-white/40 hover:text-white transition-colors text-sm font-bold tracking-widest uppercase">
+                                            {l.label}
+                                        </NavLink>
+                                    </li>
                                 ))}
                             </ul>
                         </div>
-                        <div>
-                            <h4 className="font-serif text-lg font-bold mb-6 text-pink">Socials</h4>
-                            <div className="flex justify-center md:justify-start gap-4">
-                                <a href="#" className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-pink transition-all transform hover:-translate-y-1">
-                                    <Instagram size={20} />
-                                </a>
+                        
+                        <div className="md:col-span-4">
+                            <h4 className="font-serif text-lg font-bold mb-8 text-rose">Newsletter</h4>
+                            <p className="text-white/40 text-sm mb-6">Join our list for exclusive scents and stories.</p>
+                            <div className="relative">
+                                <input 
+                                    type="email" 
+                                    placeholder="your@email.com" 
+                                    className="w-full bg-white/5 border-b border-white/20 px-0 py-4 focus:outline-none focus:border-rose transition-colors placeholder:text-white/20 text-sm"
+                                />
+                                <button className="absolute right-0 top-1/2 -translate-y-1/2 text-rose font-black text-xs uppercase tracking-widest">Join</button>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <div className="mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+                        <p className="text-white/20 text-[10px] font-bold uppercase tracking-[0.3em]">
+                            © 2024 Trinkets and Beyond. All Rights Reserved.
+                        </p>
+                        <div className="flex gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-white/20">
+                            <a href="#" className="hover:text-rose transition-colors">Privacy</a>
+                            <a href="#" className="hover:text-rose transition-colors">Terms</a>
                         </div>
                     </div>
                 </div>
