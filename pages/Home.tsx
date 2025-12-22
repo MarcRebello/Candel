@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react';
-
-// Fix: Cast react-router-dom to any to bypass type errors
 import * as ReactRouterDOM from 'react-router-dom';
 const { Link } = ReactRouterDOM as any;
-
-// Fix: Cast framer-motion to any to bypass prop validation type errors
 import * as FramerMotion from 'framer-motion';
-const { motion } = FramerMotion as any;
-
-import { Heart, Star, Loader, ArrowRight } from 'lucide-react';
+const { motion, useScroll, useTransform } = FramerMotion as any;
+import { Heart, Star, Loader, ArrowRight, Sparkles } from 'lucide-react';
 import { api } from '../lib/api';
 import { Candle, Review } from '../types';
 import CandleCard from '../components/CandleCard';
@@ -18,9 +13,12 @@ const Home: React.FC = () => {
     const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const { scrollYProgress } = useScroll();
+    const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 200]);
+    const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+
     useEffect(() => {
         const loadData = async () => {
-            // Fetch data from API
             const [c, r] = await Promise.all([api.getCandles(), api.getReviews()]);
             setCandles(c.slice(0, 3));
             setReviews(r.slice(0, 3));
@@ -29,170 +27,132 @@ const Home: React.FC = () => {
         loadData();
     }, []);
 
-    // Staggered entrance for children elements
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.15, delayChildren: 0.1 }
-        }
-    };
-
-    // Bouncy "Pop" animation
-    const itemVariants = {
-        hidden: { opacity: 0, y: 50, scale: 0.8 },
-        visible: { 
-            opacity: 1, 
-            y: 0, 
-            scale: 1,
-            transition: { 
-                type: "spring", 
-                stiffness: 400, 
-                damping: 20 
-            } 
-        }
-    };
-
     if (loading) {
-        return <div className="min-h-screen flex items-center justify-center bg-cream"><Loader className="animate-spin text-pink" size={40} /></div>;
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-cream">
+                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}>
+                    <Loader className="text-pink" size={48} />
+                </motion.div>
+            </div>
+        );
     }
 
     return (
         <div className="w-full">
             {/* Hero Section */}
-            <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-                {/* Abstract Background Shapes */}
-                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-[600px] h-[600px] bg-pink/5 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-[500px] h-[500px] bg-rose-200/20 rounded-full blur-3xl"></div>
-
+            <section className="relative min-h-[100vh] flex items-center pt-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-                    <div className="flex flex-col lg:flex-row items-center gap-16">
-                        {/* Text Content */}
+                    <div className="grid lg:grid-cols-2 gap-16 items-center">
                         <motion.div 
-                            className="flex-1 text-center lg:text-left"
-                            initial="hidden"
-                            animate="visible"
-                            variants={containerVariants}
+                            style={{ y: heroY, opacity: heroOpacity }}
+                            initial={{ opacity: 0, x: -50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
                         >
-                            <motion.div variants={itemVariants}>
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-md border border-pink/20 shadow-sm mb-8">
-                                    <Heart size={14} className="text-pink fill-pink" />
-                                    <span className="text-xs font-bold tracking-widest text-dark-brown uppercase">Artisan Crafted</span>
-                                </div>
-                            </motion.div>
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink/5 border border-pink/10 mb-8">
+                                <Sparkles size={14} className="text-pink" />
+                                <span className="text-[10px] font-bold tracking-[0.2em] text-pink uppercase">Artisan Small Batch</span>
+                            </div>
                             
-                            <motion.h1 
-                                variants={itemVariants}
-                                className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-dark-brown mb-6 leading-[1.1]"
-                            >
-                                Scents that <br/>
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink to-rose-500">Ignite Memories</span>
-                            </motion.h1>
+                            <h1 className="font-serif text-6xl md:text-8xl font-black text-dark-brown mb-8 leading-[0.95] tracking-tight">
+                                Pure Soul, <br/>
+                                <span className="italic font-normal text-pink">Poured Heart.</span>
+                            </h1>
                             
-                            <motion.p 
-                                variants={itemVariants}
-                                className="text-lg md:text-xl text-dark-brown/70 mb-10 max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed"
-                            >
-                                Discover our collection of hand-poured soy candles, designed to transform your space into a sanctuary of warmth and tranquility.
-                            </motion.p>
+                            <p className="text-xl text-dark-brown/60 mb-12 max-w-lg leading-relaxed font-medium">
+                                We craft sensory experiences that turn your house into a home. 100% soy wax, zero toxins, endless warmth.
+                            </p>
                             
-                            <motion.div 
-                                variants={itemVariants}
-                                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-                            >
+                            <div className="flex flex-col sm:flex-row gap-5">
                                 <Link to="/collections">
                                     <motion.button 
-                                        whileHover={{ scale: 1.05, boxShadow: "0 10px 30px -10px rgba(233, 30, 99, 0.5)" }}
+                                        whileHover={{ scale: 1.05, y: -5 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="bg-gradient-to-r from-pink to-rose-500 text-white px-8 py-4 rounded-full font-semibold hover:brightness-110 transition-all shadow-xl flex items-center gap-2 justify-center w-full sm:w-auto"
+                                        className="bg-pink text-white px-10 py-5 rounded-2xl font-bold shadow-2xl shadow-pink/30 flex items-center gap-3 justify-center group"
                                     >
-                                        Shop Collection <ArrowRight size={18} />
+                                        Explore Scents 
+                                        <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                                     </motion.button>
                                 </Link>
                                 <Link to="/about">
                                     <motion.button 
-                                        whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.9)" }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="bg-white/50 backdrop-blur-md text-dark-brown px-8 py-4 rounded-full font-semibold transition-all shadow-lg border border-white/50 w-full sm:w-auto"
+                                        whileHover={{ backgroundColor: "rgba(255, 255, 255, 1)", scale: 1.05 }}
+                                        className="bg-white/50 backdrop-blur-md text-dark-brown px-10 py-5 rounded-2xl font-bold border border-white/80 shadow-xl"
                                     >
-                                        Our Story
+                                        Our Craft
                                     </motion.button>
                                 </Link>
-                            </motion.div>
+                            </div>
                         </motion.div>
                         
-                        {/* Hero Image with Blob */}
                         <motion.div 
-                            className="flex-1 w-full relative"
-                            initial={{ opacity: 0, x: 100, rotate: 10 }}
-                            animate={{ opacity: 1, x: 0, rotate: 0 }}
-                            transition={{ type: "spring", stiffness: 50, damping: 20, delay: 0.2 }}
+                            initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
+                            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                            transition={{ duration: 1.2, delay: 0.2 }}
+                            className="relative hidden lg:block"
                         >
-                            <div className="relative z-10">
+                            <div className="relative z-10 group">
                                 <motion.div
-                                    animate={{ y: [-15, 15] }}
-                                    transition={{ duration: 6, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
+                                    animate={{ 
+                                        y: [0, -20, 0],
+                                        rotate: [0, 1, 0]
+                                    }}
+                                    transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                                 >
                                     <img 
-                                        src="https://images.unsplash.com/photo-1602874801006-e24946a9a1c2?w=800&h=900&fit=crop" 
-                                        alt="Luxury Candle" 
-                                        className="rounded-[2.5rem] shadow-2xl w-full max-w-md mx-auto object-cover border-8 border-white"
+                                        src="https://images.unsplash.com/photo-1602874801006-e24946a9a1c2?w=800&h=1000&fit=crop" 
+                                        alt="Signature Candle" 
+                                        className="rounded-[3rem] shadow-[0_50px_100px_-20px_rgba(45,27,23,0.3)] w-full object-cover border-[12px] border-white transition-transform duration-700 group-hover:scale-[1.02]"
                                     />
                                 </motion.div>
                                 
-                                {/* Floating Badge */}
                                 <motion.div 
-                                    className="absolute -bottom-8 -left-4 md:left-10 bg-white p-4 rounded-2xl shadow-xl border border-pink/10 flex items-center gap-4"
-                                    initial={{ opacity: 0, scale: 0, y: 50 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    transition={{ type: "spring", stiffness: 500, damping: 30, delay: 0.8 }}
+                                    className="absolute -bottom-10 -right-10 bg-white p-6 rounded-[2rem] shadow-2xl border border-pink/5 max-w-[200px]"
+                                    initial={{ x: 50, opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: 1 }}
                                 >
-                                    <div className="bg-green-100 p-3 rounded-full">
-                                        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                                    <div className="flex gap-1 mb-2">
+                                        {[...Array(5)].map((_, i) => <Star key={i} size={14} className="text-pink fill-pink" />)}
                                     </div>
-                                    <div>
-                                        <p className="font-bold text-dark-brown text-sm">New Arrival</p>
-                                        <p className="text-xs text-gray-500">Vanilla Dreams</p>
-                                    </div>
+                                    <p className="text-sm font-serif font-bold italic">"Literally changed the energy of my home."</p>
+                                    <p className="text-[10px] text-pink font-bold mt-2">— SARAH J.</p>
                                 </motion.div>
                             </div>
-                            
-                            {/* Organic Blob Behind */}
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-10">
-                                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full fill-pink/10 animate-pulse" style={{ animationDuration: '10s' }}>
-                                    <path d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,81.6,-46.6C91.4,-34.1,98.1,-19.2,95.8,-5.3C93.5,8.6,82.2,21.5,70.6,31.2C59,40.9,47.1,47.4,36.1,55.1C25.1,62.8,15,71.7,2.7,67C-9.6,62.3,-24.1,44,-37.2,30.3C-50.3,16.6,-62,7.5,-66.1,-4.2C-70.2,-15.9,-66.7,-30.2,-57.4,-41.2C-48.1,-52.2,-33,-59.9,-18.7,-68.8C-4.4,-77.7,9,-87.8,22.7,-87.2C36.4,-86.6,50.3,-75.3,44.7,-76.4Z" transform="translate(100 100)" />
-                                </svg>
+
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] -z-10 opacity-30">
+                                <div className="w-full h-full bg-gradient-to-br from-rose/40 to-transparent rounded-full blur-[100px] animate-pulse" />
                             </div>
                         </motion.div>
                     </div>
                 </div>
             </section>
 
-            {/* Featured Collections */}
-            <section className="py-24 bg-white/50 backdrop-blur-sm relative">
+            {/* Trending Section */}
+            <section className="py-32 bg-white relative overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <motion.div 
-                        className="text-center mb-16"
-                        initial={{ opacity: 0, y: 30 }}
+                        initial={{ opacity: 0, y: 50 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
+                        className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8"
                     >
-                        <h2 className="font-serif text-4xl md:text-5xl font-bold text-dark-brown mb-4">Trending Scents</h2>
-                        <div className="w-24 h-1 bg-pink mx-auto rounded-full"></div>
+                        <div>
+                            <span className="text-pink font-bold tracking-widest text-xs uppercase mb-3 block">Selected by Hand</span>
+                            <h2 className="font-serif text-5xl font-black text-dark-brown">The Signature Edits</h2>
+                        </div>
+                        <Link to="/collections" className="group flex items-center gap-2 text-pink font-bold text-lg">
+                            Explore All <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+                        </Link>
                     </motion.div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                         {candles.map((candle, i) => (
                             <motion.div 
                                 key={candle.id}
-                                initial={{ opacity: 0, y: 100, scale: 0.8 }}
-                                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                                transition={{ 
-                                    type: "spring", 
-                                    stiffness: 100, 
-                                    damping: 20, 
-                                    delay: i * 0.1 
-                                }}
+                                initial={{ opacity: 0, y: 50 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.2 }}
                                 viewport={{ once: true, margin: "-100px" }}
                             >
                                 <CandleCard candle={candle} />
@@ -202,55 +162,41 @@ const Home: React.FC = () => {
                 </div>
             </section>
 
-            {/* Reviews Preview */}
-            <section className="py-24 relative overflow-hidden">
-                <div className="absolute inset-0 bg-pink/5 -skew-y-3 transform origin-top-left z-0"></div>
-                
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-12">
-                        <div className="text-left">
-                            <h2 className="font-serif text-4xl md:text-5xl font-bold text-dark-brown mb-4">Love Notes</h2>
-                            <p className="text-dark-brown/70 text-lg">See what our community is saying</p>
+            {/* Testimonials */}
+            <section className="py-32 bg-cream/50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="bg-dark-brown rounded-[4rem] p-12 md:p-24 relative overflow-hidden text-center md:text-left">
+                        <div className="absolute top-0 right-0 w-96 h-96 bg-pink/20 rounded-full blur-[100px]" />
+                        <div className="relative z-10 grid lg:grid-cols-2 gap-20 items-center">
+                            <div>
+                                <h2 className="font-serif text-5xl md:text-6xl font-bold text-white mb-8">Loved by <br/><span className="italic text-pink">Our Community.</span></h2>
+                                <p className="text-white/60 text-lg font-medium max-w-md mx-auto md:mx-0">
+                                    Over 10,000 candles shipped worldwide. Join the movement of mindful living.
+                                </p>
+                            </div>
+                            <div className="space-y-6">
+                                {reviews.map((review, i) => (
+                                    <motion.div 
+                                        key={review.id}
+                                        initial={{ opacity: 0, x: 50 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: i * 0.1 }}
+                                        className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10"
+                                    >
+                                        <div className="flex gap-1 text-pink mb-3">
+                                            {[...Array(5)].map((_, i) => <Star key={i} size={12} fill="currentColor" />)}
+                                        </div>
+                                        <p className="text-white/80 italic font-medium mb-4">"{review.text}"</p>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-pink flex items-center justify-center text-[10px] font-bold text-white">
+                                                {review.name.charAt(0)}
+                                            </div>
+                                            <span className="text-white text-xs font-bold uppercase tracking-widest">{review.name}</span>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
                         </div>
-                        <Link to="/reviews" className="hidden md:block text-pink font-bold hover:text-rose-600 transition-colors">View all reviews &rarr;</Link>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {reviews.map((review, i) => (
-                            <motion.div 
-                                key={review.id}
-                                initial={{ opacity: 0, x: 50 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ 
-                                    type: "spring",
-                                    stiffness: 100,
-                                    damping: 20,
-                                    delay: i * 0.1 
-                                }}
-                                className="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-transparent hover:border-pink/20"
-                            >
-                                <div className="flex text-pink mb-6">
-                                    {[...Array(5)].map((_, i) => (
-                                        <Star key={i} size={18} fill={i < review.rating ? "currentColor" : "none"} className={i < review.rating ? "" : "text-gray-200"} />
-                                    ))}
-                                </div>
-                                <p className="text-dark-brown/80 mb-8 font-medium leading-relaxed">"{review.text}"</p>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink to-rose-400 flex items-center justify-center text-white font-bold font-serif text-lg shadow-md">
-                                        {review.name.charAt(0)}
-                                    </div>
-                                    <div>
-                                        <div className="font-bold text-dark-brown">{review.name}</div>
-                                        <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">{review.date}</div>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
-                    
-                    <div className="mt-8 text-center md:hidden">
-                        <Link to="/reviews" className="text-pink font-bold hover:text-rose-600 transition-colors">View all reviews &rarr;</Link>
                     </div>
                 </div>
             </section>

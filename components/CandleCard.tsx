@@ -1,13 +1,7 @@
-// Import React
 import React from 'react';
-// Import icons
-import { Star, ShoppingBag } from 'lucide-react';
-
-// Fix: Cast framer-motion to any to bypass prop validation type errors
+import { Star, ShoppingBag, ArrowUpRight } from 'lucide-react';
 import * as FramerMotion from 'framer-motion';
 const { motion } = FramerMotion as any;
-
-// Import the Candle type definition
 import { Candle } from '../types';
 
 interface CandleCardProps {
@@ -17,61 +11,61 @@ interface CandleCardProps {
 const CandleCard: React.FC<CandleCardProps> = ({ candle }) => {
     return (
         <motion.div 
-            whileHover={{ 
-                y: -10, 
-                scale: 1.03,
-                transition: { type: 'spring', stiffness: 400, damping: 17 }
-            }}
-            className="group bg-white rounded-[2rem] shadow-lg hover:shadow-2xl hover:shadow-pink/30 transition-shadow duration-300 h-full flex flex-col overflow-hidden border border-gray-100"
+            whileHover={{ y: -15 }}
+            className="group relative flex flex-col h-full bg-white rounded-[2.5rem] overflow-hidden transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(216,27,96,0.2)] border border-gray-100/50"
         >
-            {/* Image Container */}
-            <div className="relative overflow-hidden aspect-[4/5]">
+            {/* Image Wrap */}
+            <div className="relative aspect-[4/5] overflow-hidden bg-cream">
                 <motion.img 
-                    whileHover={{ scale: 1.15 }}
-                    transition={{ duration: 0.7, ease: "easeOut" }}
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
                     src={candle.image} 
                     alt={candle.name} 
                     className="w-full h-full object-cover"
                 />
                 
-                {/* Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                {/* Collection Badge */}
-                <div className="absolute top-4 left-4">
-                     <span className="text-[10px] font-bold text-dark-brown bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full uppercase tracking-widest shadow-sm">
-                        {candle.collection}
+                {/* Visual Overlays */}
+                <div className="absolute inset-0 bg-gradient-to-t from-dark-brown/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                {/* Category Tag */}
+                <div className="absolute top-6 left-6">
+                    <span className="bg-white/80 backdrop-blur-xl px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-dark-brown shadow-sm">
+                        {candle.collection.split(' ')[0]}
                     </span>
                 </div>
 
-                {/* Quick Action Button (Visible on Hover) */}
+                {/* Quick Add Floating Button */}
                 <motion.button
-                    initial={{ opacity: 0, y: 20 }}
-                    whileHover={{ scale: 1.1 }}
+                    whileHover={{ scale: 1.1, rotate: 10 }}
                     whileTap={{ scale: 0.9 }}
-                    className="absolute bottom-6 right-6 w-12 h-12 bg-white text-pink rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0"
+                    className="absolute top-6 right-6 w-12 h-12 bg-pink text-white rounded-2xl flex items-center justify-center shadow-xl opacity-0 translate-y-[-20px] group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500"
                 >
                     <ShoppingBag size={20} />
                 </motion.button>
             </div>
-            
-            {/* Content Container */}
-            <div className="p-8 flex flex-col flex-grow relative bg-white">
-                <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-serif text-2xl font-bold text-dark-brown group-hover:text-pink transition-colors">{candle.name}</h3>
-                    <div className="flex items-center gap-1 bg-cream px-2 py-1 rounded-lg">
+
+            {/* Info */}
+            <div className="p-8 flex flex-col flex-grow">
+                <div className="flex justify-between items-start mb-4">
+                    <h3 className="font-serif text-2xl font-black text-dark-brown group-hover:text-pink transition-colors leading-tight">
+                        {candle.name}
+                    </h3>
+                    <div className="flex items-center gap-1 bg-pink/5 px-2 py-1 rounded-lg">
                         <Star size={12} className="text-pink fill-pink" />
-                        <span className="text-xs font-bold text-dark-brown">{candle.rating}</span>
+                        <span className="text-xs font-black text-pink">{candle.rating}</span>
                     </div>
                 </div>
 
-                <p className="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed flex-grow">{candle.description}</p>
-                
-                <button 
-                    className="w-full py-3 rounded-xl font-bold text-sm uppercase tracking-wider border-2 border-pink/10 text-pink hover:bg-pink hover:text-white transition-all duration-300"
-                >
-                    View Details
-                </button>
+                <p className="text-dark-brown/50 text-sm font-medium leading-relaxed line-clamp-2 mb-8 flex-grow">
+                    {candle.description}
+                </p>
+
+                <div className="flex items-center justify-between pt-6 border-t border-gray-100">
+                    <span className="text-xl font-serif font-black text-dark-brown">$34.00</span>
+                    <button className="flex items-center gap-2 text-pink font-bold text-sm uppercase tracking-widest hover:translate-x-1 transition-transform">
+                        Details <ArrowUpRight size={16} />
+                    </button>
+                </div>
             </div>
         </motion.div>
     );

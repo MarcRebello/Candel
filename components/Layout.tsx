@@ -1,122 +1,124 @@
-import React, { useState } from 'react';
-// Fix: Cast react-router-dom to any to bypass missing export type errors
+import React, { useState, useEffect } from 'react';
 import * as ReactRouterDOM from 'react-router-dom';
 const { NavLink, Outlet, useLocation } = ReactRouterDOM as any;
-
-// Fix: Cast framer-motion to any to bypass prop validation type errors
 import * as FramerMotion from 'framer-motion';
-const { motion, AnimatePresence } = FramerMotion as any;
-
-import { Flame, Menu, X, Instagram } from 'lucide-react';
+const { motion, AnimatePresence, useScroll, useTransform } = FramerMotion as any;
+import { Flame, Menu, X, Instagram, ShoppingCart } from 'lucide-react';
 import { NAVIGATION_LINKS } from '../constants';
 
-const BackgroundTexture = () => (
-    <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.4] mix-blend-multiply">
-        <svg className='w-full h-full'>
-            <filter id='noiseFilter'>
-                <feTurbulence 
-                    type='fractalNoise' 
-                    baseFrequency='0.8' 
-                    numOctaves='3' 
-                    stitchTiles='stitch' />
-            </filter>
-            <rect width='100%' height='100%' filter='url(#noiseFilter)' />
-        </svg>
-    </div>
-);
-
-const FloatingParticles = () => (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Animated Glow Orbs - Softer Colors */}
-        {[...Array(4)].map((_, i) => (
-            <motion.div
-                key={i}
-                className="absolute rounded-full bg-gradient-to-r from-pink/5 to-rose-100/10 blur-3xl"
-                initial={{ 
-                    x: Math.random() * window.innerWidth, 
-                    y: Math.random() * window.innerHeight,
-                }}
-                animate={{ 
-                    x: [Math.random() * window.innerWidth, Math.random() * window.innerWidth],
-                    y: [Math.random() * window.innerHeight, Math.random() * window.innerHeight],
-                    scale: [1, 1.2, 1],
-                    opacity: [0.2, 0.4, 0.2]
-                }}
-                transition={{ 
-                    duration: 20 + Math.random() * 10, 
-                    repeat: Infinity, 
-                    repeatType: "reverse",
-                    ease: "easeInOut"
-                }}
-                style={{
-                    width: `${400 + Math.random() * 300}px`,
-                    height: `${400 + Math.random() * 300}px`,
-                }}
-            />
-        ))}
-    </div>
-);
+const BackgroundVisuals = () => {
+    return (
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+            {/* Soft Warm Gradients */}
+            <div className="absolute top-[-10%] right-[-5%] w-[60%] h-[60%] bg-pink/5 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '12s' }} />
+            <div className="absolute bottom-[-5%] left-[-5%] w-[50%] h-[50%] bg-rose-200/10 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '8s' }} />
+            
+            {/* Animated Particles */}
+            {[...Array(6)].map((_, i) => (
+                <motion.div
+                    key={i}
+                    className="absolute w-1 h-1 bg-pink/20 rounded-full"
+                    initial={{ x: Math.random() * 100 + "%", y: Math.random() * 100 + "%" }}
+                    animate={{ 
+                        y: ["-10%", "110%"],
+                        opacity: [0, 1, 0]
+                    }}
+                    transition={{ 
+                        duration: 10 + Math.random() * 20, 
+                        repeat: Infinity, 
+                        ease: "linear",
+                        delay: Math.random() * 10
+                    }}
+                />
+            ))}
+        </div>
+    );
+};
 
 const Navbar: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const location = useLocation();
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
-        <nav className="fixed w-full top-0 z-50 transition-all duration-300">
-            {/* Glassmorphism Background */}
-            <div className="absolute inset-0 bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm"></div>
-            
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="flex justify-between items-center h-20">
+        <nav className={`fixed w-full top-0 z-50 transition-all duration-500 ${scrolled ? 'py-3' : 'py-6'}`}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className={`relative flex justify-between items-center px-6 py-3 rounded-full transition-all duration-500 ${
+                    scrolled ? 'bg-white/80 backdrop-blur-xl shadow-lg border border-white/40' : 'bg-transparent'
+                }`}>
                     <NavLink to="/" className="flex items-center space-x-2 group">
                         <motion.div 
-                            whileHover={{ scale: 1.2, rotate: 180 }} 
-                            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                            className="bg-pink/10 p-2 rounded-full text-pink"
+                            whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                            className="bg-pink text-white p-2 rounded-xl shadow-lg shadow-pink/20"
                         >
-                            <Flame size={24} fill="currentColor" />
+                            <Flame size={20} fill="currentColor" />
                         </motion.div>
-                        <span className="font-serif text-2xl font-bold text-dark-brown tracking-tight group-hover:text-pink transition-colors">Trinkets <span className="text-pink font-light">&</span> Beyond</span>
+                        <span className="font-serif text-xl font-extrabold text-dark-brown tracking-tight">
+                            Trinkets <span className="text-pink">&</span> Beyond
+                        </span>
                     </NavLink>
 
-                    <div className="hidden md:flex items-center space-x-1">
+                    <div className="hidden md:flex items-center space-x-2">
                         {NAVIGATION_LINKS.map((link: any) => (
                             <NavLink
                                 key={link.path}
                                 to={link.path}
                                 className={({ isActive }: any) =>
-                                    `px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 relative group ${
-                                        isActive ? 'text-pink bg-pink/5' : 'text-dark-brown hover:text-pink hover:bg-white/50'
+                                    `px-5 py-2 rounded-full text-sm font-bold transition-all duration-300 relative ${
+                                        isActive ? 'text-pink' : 'text-dark-brown/70 hover:text-pink'
                                     }`
                                 }
                             >
                                 {link.label}
+                                {location.pathname === link.path && (
+                                    <motion.div 
+                                        layoutId="nav-underline"
+                                        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-pink rounded-full"
+                                    />
+                                )}
                             </NavLink>
                         ))}
                     </div>
 
-                    <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-dark-brown hover:text-pink transition-colors">
-                        {isOpen ? <X size={28} /> : <Menu size={28} />}
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <motion.button 
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            className="p-2 text-dark-brown hover:text-pink transition-colors relative"
+                        >
+                            <ShoppingCart size={22} />
+                            <span className="absolute top-0 right-0 w-4 h-4 bg-pink text-white text-[10px] flex items-center justify-center rounded-full font-bold">0</span>
+                        </motion.button>
+                        <button onClick={() => setIsOpen(!isOpen)} className="md:hidden text-dark-brown">
+                            {isOpen ? <X size={28} /> : <Menu size={28} />}
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="md:hidden bg-white/95 backdrop-blur-xl border-t border-gray-100 overflow-hidden absolute w-full shadow-xl"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        className="md:hidden absolute top-full left-4 right-4 mt-2 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden"
                     >
-                        <div className="px-4 py-6 space-y-2">
+                        <div className="p-6 space-y-2">
                             {NAVIGATION_LINKS.map((link: any) => (
                                 <NavLink
                                     key={link.path}
                                     to={link.path}
                                     onClick={() => setIsOpen(false)}
                                     className={({ isActive }: any) =>
-                                        `block px-4 py-3 rounded-xl text-base font-medium transition-colors ${
-                                            isActive ? 'bg-pink text-white shadow-md' : 'text-dark-brown hover:bg-pink/5 hover:text-pink'
+                                        `block px-6 py-4 rounded-2xl text-lg font-bold transition-all ${
+                                            isActive ? 'bg-pink text-white shadow-lg shadow-pink/20' : 'text-dark-brown hover:bg-pink/5 hover:text-pink'
                                         }`
                                     }
                                 >
@@ -131,62 +133,45 @@ const Navbar: React.FC = () => {
     );
 };
 
-const Footer: React.FC = () => (
-    <footer className="bg-dark-brown text-white py-16 relative overflow-hidden z-10 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-                <div className="space-y-6">
-                    <div className="flex items-center space-x-2">
-                        <Flame size={24} className="text-pink" fill="currentColor" />
-                        <span className="font-serif text-2xl font-bold">Trinkets <span className="text-pink">&</span> Beyond</span>
-                    </div>
-                    <p className="text-gray-300 leading-relaxed text-sm">Handcrafted artisan candles that illuminate your space with authentic elegance and warmth.</p>
-                </div>
-                <div>
-                    <h3 className="font-serif text-lg font-bold mb-6 text-pink">Explore</h3>
-                    <ul className="space-y-3">
-                        {NAVIGATION_LINKS.map((link: any) => (
-                            <li key={link.path}><NavLink to={link.path} className="text-gray-300 hover:text-white hover:translate-x-1 transition-all inline-block text-sm">{link.label}</NavLink></li>
-                        ))}
-                    </ul>
-                </div>
-                <div>
-                    <h3 className="font-serif text-lg font-bold mb-6 text-pink">Collections</h3>
-                    <ul className="space-y-3">
-                        {['Signature', 'Relaxation', 'Energizing', 'Seasonal'].map(c => (
-                            <li key={c}><span className="text-gray-300 cursor-pointer hover:text-white transition text-sm">{c}</span></li>
-                        ))}
-                    </ul>
-                </div>
-                <div>
-                    <h3 className="font-serif text-lg font-bold mb-6 text-pink">Stay Connected</h3>
-                    <div className="flex gap-4 mb-4">
-                        <a href="#" className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center hover:bg-pink hover:text-white transition-all transform hover:scale-110 border border-white/10">
-                            <Instagram size={20} />
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div className="border-t border-white/10 pt-8 text-center text-gray-400 text-sm">
-                <p>&copy; {new Date().getFullYear()} Trinkets and Beyond. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-);
-
 const Layout: React.FC = () => {
     return (
-        <div className="flex flex-col min-h-screen relative bg-cream selection:bg-pink selection:text-white">
-            <BackgroundTexture />
-            <FloatingParticles />
+        <div className="flex flex-col min-h-screen relative font-sans">
+            <BackgroundVisuals />
             <Navbar />
-            <main className="flex-grow z-10 relative pt-20">
+            <main className="flex-grow z-10 relative">
                  <Outlet />
             </main>
-            <Footer />
-            <div className="fixed bottom-4 right-4 z-50">
-                <NavLink to="/secret" className="block w-4 h-4 rounded-full transition-all duration-300 opacity-0 hover:opacity-100 cursor-default" />
-            </div>
+            <footer className="bg-dark-brown text-white py-20 z-10 relative overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+                        <div className="col-span-1 md:col-span-2 space-y-6">
+                            <div className="flex items-center justify-center md:justify-start space-x-2">
+                                <Flame size={24} className="text-pink" fill="currentColor" />
+                                <span className="font-serif text-2xl font-bold">Trinkets <span className="text-pink">&</span> Beyond</span>
+                            </div>
+                            <p className="text-white/60 text-lg max-w-md mx-auto md:mx-0 font-medium">
+                                Elevating everyday moments with handcrafted scents that linger in your heart.
+                            </p>
+                        </div>
+                        <div>
+                            <h4 className="font-serif text-lg font-bold mb-6 text-pink">Quick Links</h4>
+                            <ul className="space-y-4 font-medium text-white/50">
+                                {NAVIGATION_LINKS.map(l => (
+                                    <li key={l.path}><NavLink to={l.path} className="hover:text-white transition-colors">{l.label}</NavLink></li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 className="font-serif text-lg font-bold mb-6 text-pink">Socials</h4>
+                            <div className="flex justify-center md:justify-start gap-4">
+                                <a href="#" className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-pink transition-all transform hover:-translate-y-1">
+                                    <Instagram size={20} />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 };
