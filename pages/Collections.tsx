@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
-// Fix: Cast framer-motion to any to bypass prop validation type errors
-import * as FramerMotion from 'framer-motion';
-const { motion } = FramerMotion as any;
-
+import { motion } from 'framer-motion';
 import { api } from '../lib/api';
 import { Candle } from '../types';
 import CandleCard from '../components/CandleCard';
@@ -20,23 +16,24 @@ const Collections: React.FC = () => {
         });
     }, []);
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader className="animate-spin text-pink" size={40} /></div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center bg-cream"><Loader className="animate-spin text-rose" size={40} /></div>;
 
     return (
-        <section className="py-16 md:py-24 min-h-screen">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-32 md:py-40 min-h-screen bg-cream">
+            <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-8">
                 <motion.div 
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-16"
+                    transition={{ duration: 0.8 }}
+                    className="text-center mb-24"
                 >
-                    <span className="text-pink font-serif italic text-xl">Discover our scents</span>
-                    <h1 className="font-serif text-5xl md:text-6xl font-bold text-dark-brown mt-2 mb-6">The Collection</h1>
-                    <div className="w-24 h-1 bg-pink mx-auto rounded-full"></div>
+                    <span className="text-rose font-black tracking-[0.5em] text-[10px] uppercase mb-4 block">Seasonal</span>
+                    <h1 className="font-serif text-5xl md:text-7xl font-black text-charcoal tracking-tighter leading-tight">The Collection</h1>
+                    <div className="w-24 h-1 bg-rose/20 mx-auto rounded-full mt-8"></div>
                 </motion.div>
                 
                 <motion.div 
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10"
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16 lg:gap-20"
                     initial="hidden"
                     animate="show"
                     variants={{
@@ -47,9 +44,10 @@ const Collections: React.FC = () => {
                         <motion.div 
                             key={candle.id}
                             variants={{
-                                hidden: { opacity: 0, y: 20 },
+                                hidden: { opacity: 0, y: 30 },
                                 show: { opacity: 1, y: 0 }
                             }}
+                            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                         >
                             <CandleCard candle={candle} />
                         </motion.div>
